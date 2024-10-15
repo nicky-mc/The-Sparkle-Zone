@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 
 export default function SearchBar({ onSearch, onFilterChange }) {
+  const [searchQuery, setSearchQuery] = useState("");
+
   const handleSearchChange = (event) => {
-    onSearch(event.target.value);
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSearchClick = () => {
+    onSearch(searchQuery);
   };
 
   const handleFilterChange = (event) => {
@@ -16,9 +22,12 @@ export default function SearchBar({ onSearch, onFilterChange }) {
           type="text"
           placeholder="Search Pokémon"
           className="search-input"
+          value={searchQuery}
           onChange={handleSearchChange}
         />
-        <button className="search-button">Search</button>
+        <button className="search-button" onClick={handleSearchClick}>
+          Search
+        </button>
         <select className="filter-select" onChange={handleFilterChange}>
           <option value="">All Generations</option>
           <option value="generation-1">Generation 1</option>

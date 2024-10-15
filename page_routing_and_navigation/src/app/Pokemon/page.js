@@ -7,9 +7,34 @@ import "./pokemon.css";
 
 const LIMIT = 20; // Number of Pokémon to fetch per request
 
-async function fetchPokemonData(offset = 0) {
+async function fetchPokemonData(offset = 0, filter = "", searchQuery = "") {
+  const params = new URLSearchParams({
+    limit: LIMIT,
+    offset: offset,
+  });
+
+  if (filter.startsWith("generation-")) {
+    const generation = parseInt(filter.split("-")[1], 10);
+    const response = await fetch(
+      `https://pokeapi.co/api/v2/generation/${generation}`
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    const pokemonNames = data.pokemon_species.map((species) => species.name);
+    params.append("name", pokemonNames.join(","));
+  } else if (filter.startsWith("type-")) {
+    const type = filter.split("-")[1];
+    params.append("type", type);
+  }
+
+  if (searchQuery) {
+    params.append("name", searchQuery);
+  }
+
   const response = await fetch(
-    `https://pokeapi.co/api/v2/pokemon?limit=${LIMIT}&offset=${offset}`
+    `https://pokeapi.co/api/v2/pokemon?${params.toString()}`
   );
   if (!response.ok) {
     throw new Error("Network response was not ok");
@@ -48,12 +73,14 @@ export default function PokemonFetch() {
   const [error, setError] = useState(null);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [filter, setFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
       try {
-        const pokemonList = await fetchPokemonData(offset);
+        const pokemonList = await fetchPokemonData(offset, filter, searchQuery);
         const pokemonDetails = await fetchPokemonDetails(pokemonList);
         setPokePosts((prevPosts) => [...prevPosts, ...pokemonDetails]);
         setFilteredPosts((prevPosts) => [...prevPosts, ...pokemonDetails]);
@@ -63,27 +90,20 @@ export default function PokemonFetch() {
       setLoading(false);
     }
     fetchData();
-  }, [offset]);
+  }, [offset, filter, searchQuery]);
 
   const handleSearch = (query) => {
-    const filtered = pokePosts.filter((post) =>
-      post.name.toLowerCase().includes(query.toLowerCase())
-    );
-    setFilteredPosts(filtered);
+    setSearchQuery(query);
+    setOffset(0);
+    setPokePosts([]);
+    setFilteredPosts([]);
   };
 
   const handleFilterChange = (filter) => {
-    let filtered = pokePosts;
-    if (filter.startsWith("generation-")) {
-      const generation = parseInt(filter.split("-")[1], 10);
-      filtered = pokePosts.filter((post) => post.generation === generation);
-    } else if (filter.startsWith("type-")) {
-      const type = filter.split("-")[1];
-      filtered = pokePosts.filter((post) =>
-        post.types.some((typeInfo) => typeInfo.type.name === type)
-      );
-    }
-    setFilteredPosts(filtered);
+    setFilter(filter);
+    setOffset(0);
+    setPokePosts([]);
+    setFilteredPosts([]);
   };
 
   const loadMorePokemon = () => {
@@ -96,7 +116,7 @@ export default function PokemonFetch() {
 
   return (
     <div className="pokemon-container">
-      <h1 className="pokemon-title">Who do you Choose?</h1>
+      <h1 className="pokemon-title">Who do you choose?</h1>
       <SearchBar onSearch={handleSearch} onFilterChange={handleFilterChange} />
       <div className="pokemon-grid">
         {filteredPosts.map((post) => (
