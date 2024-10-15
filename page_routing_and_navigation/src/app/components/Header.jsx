@@ -22,8 +22,8 @@ export default function Header() {
             </Link>
           </li>
           <li>
-            <Link href="/posts/1" className="hover:underline">
-              Post 1
+            <Link href="/Pokemon" className="hover:underline">
+              Pokemon
             </Link>
           </li>
         </ul>
