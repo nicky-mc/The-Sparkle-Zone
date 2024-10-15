@@ -33,6 +33,8 @@ async function fetchPokemonData(offset = 0, filter = "", searchQuery = "") {
     params.append("name", searchQuery);
   }
 
+  console.log("Fetching Pokémon with params:", params.toString());
+
   const response = await fetch(
     `https://pokeapi.co/api/v2/pokemon?${params.toString()}`
   );
