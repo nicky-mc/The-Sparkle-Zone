@@ -6,6 +6,7 @@ import SearchBar from "../components/SearchBar";
 import "./pokemon.css";
 
 const CONCURRENT_REQUESTS = 50; // Increased limit for concurrent requests
+const RETRY_LIMIT = 3; // Number of retry attempts for failed requests
 
 async function fetchPokemonDataByGeneration(generation) {
   const response = await fetch(
@@ -26,19 +27,28 @@ async function fetchPokemonDetails(pokemonNames) {
     const chunk = pokemonNames.slice(i, i + CONCURRENT_REQUESTS);
     const chunkDetails = await Promise.all(
       chunk.map(async (name) => {
-        try {
-          const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-          if (!res.ok) {
-            console.error(
-              `Failed to fetch details for ${name}: ${res.statusText}`
+        let attempts = 0;
+        while (attempts < RETRY_LIMIT) {
+          try {
+            const res = await fetch(
+              `https://pokeapi.co/api/v2/pokemon/${name}`
             );
-            return null;
+            if (!res.ok) {
+              throw new Error(
+                `Failed to fetch details for ${name}: ${res.statusText}`
+              );
+            }
+            const pokemonData = await res.json();
+            return pokemonData;
+          } catch (error) {
+            attempts++;
+            console.error(
+              `Error fetching details for ${name}: ${error.message}. Attempt ${attempts} of ${RETRY_LIMIT}`
+            );
+            if (attempts >= RETRY_LIMIT) {
+              return null;
+            }
           }
-          const pokemonData = await res.json();
-          return pokemonData;
-        } catch (error) {
-          console.error(`Error fetching details for ${name}: ${error.message}`);
-          return null;
         }
       })
     );
