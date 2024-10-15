@@ -118,7 +118,7 @@ export default function PokemonFetch() {
 
   return (
     <div className="pokemon-container">
-      <h1 className="pokemon-title">Pokemon</h1>
+      <h1 className="pokemon-title">Who do you Ch</h1>
       <SearchBar onSearch={handleSearch} onFilterChange={handleFilterChange} />
       <div className="pokemon-grid">
         {filteredPosts.map((post) => (

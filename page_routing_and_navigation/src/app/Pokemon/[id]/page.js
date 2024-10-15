@@ -35,22 +35,28 @@ export default async function PokemonDetail({ params }) {
       </Link>
       <h1 className="pokemon-detail-title">{pokemon.name}</h1>
       <div className="pokemon-detail-card">
-        <img
-          src={pokemon.sprites.front_default}
-          alt={pokemon.name}
-          className="pokemon-detail-image"
-        />
-        <p className="pokemon-detail-type">
-          Type: {pokemon.types.map((typeInfo) => typeInfo.type.name).join(", ")}
-        </p>
-        <p className="pokemon-detail-info">Height: {pokemon.height}</p>
-        <p className="pokemon-detail-info">Weight: {pokemon.weight}</p>
-        <p className="pokemon-detail-info">
-          Abilities:{" "}
-          {pokemon.abilities
-            .map((abilityInfo) => abilityInfo.ability.name)
-            .join(", ")}
-        </p>
+        <div className="pokemon-detail-image-section">
+          <img
+            src={pokemon.sprites.front_default}
+            alt={pokemon.name}
+            className="pokemon-detail-image"
+          />
+        </div>
+        <div className="pokemon-detail-info-section">
+          <h2 className="pokemon-detail-info-title">Basic Information</h2>
+          <p className="pokemon-detail-info">
+            Type:{" "}
+            {pokemon.types.map((typeInfo) => typeInfo.type.name).join(", ")}
+          </p>
+          <p className="pokemon-detail-info">Height: {pokemon.height}</p>
+          <p className="pokemon-detail-info">Weight: {pokemon.weight}</p>
+          <p className="pokemon-detail-info">
+            Abilities:{" "}
+            {pokemon.abilities
+              .map((abilityInfo) => abilityInfo.ability.name)
+              .join(", ")}
+          </p>
+        </div>
         <div className="pokemon-detail-stats">
           <h2 className="pokemon-detail-stats-title">Base Stats</h2>
           <ul>

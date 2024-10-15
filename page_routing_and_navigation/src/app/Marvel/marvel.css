@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Container for the Marvel characters page */
+.marvel-container {
+  @apply p-4;
+}
+
+.marvel-title {
+  @apply text-3xl font-bold mb-4 text-center;
+}
+
+.marvel-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
+}
+
+.marvel-card {
+  @apply bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md;
+}
+
+.marvel-name {
+  @apply text-xl font-semibold;
+}
+
+.marvel-description {
+  @apply text-gray-700 dark:text-gray-300;
+}
+
+.marvel-image {
+  @apply w-full h-auto mt-2;
+}
+
+/* Styles for the search bar */
+.search-bar-container {
+  @apply flex flex-col items-center justify-center;
+}
+
+.search-bar {
+  @apply mb-4 flex items-center;
+}
+
+.search-input {
+  @apply p-2 border border-gray-300 rounded-l-lg;
+  background-color: var(--background);
+  color: var(--foreground);
+  width: 100%;
+  max-width: 300px;
+}
+
+.search-input::placeholder {
+  color: var(--foreground);
+  opacity: 0.6;
+}
+
+.search-button {
+  @apply p-2 bg-blue-500 text-white rounded-r-lg;
+  transition: background-color 0.3s;
+}
+
+.search-button:hover {
+  background-color: #3b82f6; /* Lighter blue on hover */
+}
+
+.filter-select {
+  @apply p-2 border border-gray-300 rounded-lg ml-2;
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s;
+}
+
+.filter-select:hover {
+  background-color: #f0f0f0; /* Lighter background on hover */
+}
+
+.pagination {
+  @apply flex justify-center items-center mt-4;
+}
+/* Add these styles to your existing marvel.css file */
+
+.marvel-detail-container {
+  @apply max-w-4xl mx-auto p-4;
+}
+
+.marvel-detail-header {
+  @apply flex flex-col md:flex-row items-center md:items-start gap-4 mb-8;
+}
+
+.marvel-detail-image {
+  @apply w-full md:w-1/3 rounded-lg shadow-lg;
+}
+
+.marvel-detail-info {
+  @apply flex-1;
+}
+
+.marvel-detail-name {
+  @apply text-3xl font-bold mb-2;
+}
+
+.marvel-detail-description {
+  @apply text-gray-600 dark:text-gray-300;
+}
+
+.marvel-detail-section {
+  @apply mb-8;
+}
+
+.marvel-section-title {
+  @apply text-2xl font-semibold mb-4;
+}
+
+.marvel-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 gap-4;
+}
+
+.marvel-item {
+  @apply bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow;
+}
+
+.marvel-links {
+  @apply flex flex-wrap gap-4;
+}
+
+.marvel-link-button {
+  @apply bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded;
+}
+
+.marvel-loading,
+.marvel-error,
+.marvel-not-found {
+  @apply text-center text-xl mt-8;
+}
+
+.pagination button {
+  @apply mx-2 px-4 py-2 bg-blue-500 text-white rounded-lg;
+  transition: background-color 0.3s;
+}
+
+.pagination button:disabled {
+  @apply bg-gray-300 cursor-not-allowed;
+}
+
+.pagination span {
+  @apply mx-2;
+}
+
+/* Global styles for body colors */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  @apply text-foreground bg-background font-sans;
+}

@@ -3,7 +3,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@layer components {
+  .btn {
+    @apply px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700;
+  }
+}
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -35,4 +39,28 @@ h6 {
   .text-balance {
     text-wrap: balance;
   }
+}
+/* New classes for the Header component */
+.header {
+  @apply bg-gray-800 text-white p-4;
+}
+
+.nav {
+  @apply flex flex-wrap justify-between items-center;
+}
+
+.nav-brand {
+  @apply text-lg font-bold mb-2 md:mb-0;
+}
+
+.nav-list {
+  @apply flex flex-wrap space-x-4;
+}
+
+.nav-item {
+  @apply mb-2 md:mb-0;
+}
+
+.nav-link {
+  @apply hover:underline;
 }

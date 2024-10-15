@@ -8,7 +8,7 @@
 }
 
 .pokemon-title {
-  @apply text-3xl font-bold mb-4;
+  @apply text-3xl font-bold mb-4 text-center;
 }
 
 .pokemon-grid {
@@ -47,18 +47,48 @@
 
 .pokemon-detail-card {
   @apply bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg;
+  @apply grid grid-cols-1 md:grid-cols-2 gap-6;
 }
 
 .pokemon-detail-image {
   @apply w-64 h-64 mx-auto mb-4;
 }
 
-.pokemon-detail-type {
-  @apply text-lg text-gray-700 dark:text-gray-300 mb-2;
+.pokemon-detail-info-section {
+  @apply mb-4;
+}
+
+.pokemon-detail-info-title {
+  @apply text-2xl font-bold mb-2;
 }
 
 .pokemon-detail-info {
+  @apply text-lg text-gray-700 dark:text-gray-300 mb-2;
+}
+
+.pokemon-detail-stats,
+.pokemon-detail-moves {
+  @apply mb-4;
+}
+
+.pokemon-detail-stats-title,
+.pokemon-detail-moves-title {
+  @apply text-2xl font-bold mb-2;
+}
+
+.pokemon-detail-stats ul,
+.pokemon-detail-moves ul {
+  @apply list-disc list-inside;
+}
+
+.pokemon-detail-stats li,
+.pokemon-detail-moves li {
   @apply text-gray-600 dark:text-gray-400 mb-1;
+}
+
+/* Styles for the search bar */
+.search-bar-container {
+  @apply flex flex-col items-center justify-center;
 }
 
 .search-bar {
@@ -114,5 +144,5 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Comic Neue", Arial, Helvetica, sans-serif;
 }
