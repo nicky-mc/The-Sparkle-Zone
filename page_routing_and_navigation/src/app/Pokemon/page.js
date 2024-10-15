@@ -93,7 +93,7 @@ export default function PokemonFetch() {
     <div className="pokemon-container">
       <h1 className="pokemon-title">Who do you choose?</h1>
       <div className="generation-buttons">
-        {[1, 2, 3, 4, 5, 6, 7, 8].map((gen) => (
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((gen) => (
           <button
             key={gen}
             onClick={() => handleGenerationChange(gen)}
