@@ -5,74 +5,31 @@ import Link from "next/link";
 import SearchBar from "../components/SearchBar";
 import "./pokemon.css";
 
-const LIMIT = 20; // Number of Pokémon to fetch per request
+const CONCURRENT_REQUESTS = 50; // Increased limit for concurrent requests
 
-async function fetchPokemonData(offset = 0, filter = "", searchQuery = "") {
-  const params = new URLSearchParams({
-    limit: LIMIT,
-    offset: offset,
-  });
+async function fetchPokemonDataByGeneration(generation) {
+  const response = await fetch(
+    `https://pokeapi.co/api/v2/generation/${generation}`
+  );
+  if (!response.ok) {
+    throw new Error("Network response was not ok");
+  }
+  const data = await response.json();
+  const pokemonNames = data.pokemon_species.map((species) => species.name);
+  return pokemonNames;
+}
 
-  let pokemonList = [];
+async function fetchPokemonDetails(pokemonNames) {
+  const pokemonDetails = [];
 
-  if (filter.startsWith("generation-")) {
-    const generation = parseInt(filter.split("-")[1], 10);
-    const response = await fetch(
-      `https://pokeapi.co/api/v2/generation/${generation}`
-    );
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data = await response.json();
-    const pokemonNames = data.pokemon_species.map((species) => species.name);
-    pokemonList = await Promise.all(
-      pokemonNames.map(async (name) => {
+  for (let i = 0; i < pokemonNames.length; i += CONCURRENT_REQUESTS) {
+    const chunk = pokemonNames.slice(i, i + CONCURRENT_REQUESTS);
+    const chunkDetails = await Promise.all(
+      chunk.map(async (name) => {
         const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
         if (!res.ok) {
           throw new Error(
             `Failed to fetch details for ${name}: ${res.statusText}`
-          );
-        }
-        return res.json();
-      })
-    );
-  } else {
-    if (filter.startsWith("type-")) {
-      const type = filter.split("-")[1];
-      params.append("type", type);
-    }
-
-    if (searchQuery) {
-      params.append("name", searchQuery);
-    }
-
-    console.log("Fetching Pokémon with params:", params.toString());
-
-    const response = await fetch(
-      `https://pokeapi.co/api/v2/pokemon?${params.toString()}`
-    );
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data = await response.json();
-    pokemonList = data.results;
-  }
-
-  return pokemonList;
-}
-
-async function fetchPokemonDetails(pokemonList) {
-  const CONCURRENT_REQUESTS = 10; // Limit the number of concurrent requests
-  const pokemonDetails = [];
-
-  for (let i = 0; i < pokemonList.length; i += CONCURRENT_REQUESTS) {
-    const chunk = pokemonList.slice(i, i + CONCURRENT_REQUESTS);
-    const chunkDetails = await Promise.all(
-      chunk.map(async (pokemon) => {
-        const res = await fetch(pokemon.url);
-        if (!res.ok) {
-          throw new Error(
-            `Failed to fetch details for ${pokemon.name}: ${res.statusText}`
           );
         }
         const pokemonData = await res.json();
@@ -89,18 +46,15 @@ export default function PokemonFetch() {
   const [pokePosts, setPokePosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [filter, setFilter] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [generation, setGeneration] = useState(1);
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
       try {
-        const offset = (page - 1) * LIMIT;
-        const pokemonList = await fetchPokemonData(offset, filter, searchQuery);
-        const pokemonDetails = await fetchPokemonDetails(pokemonList);
+        const pokemonNames = await fetchPokemonDataByGeneration(generation);
+        const pokemonDetails = await fetchPokemonDetails(pokemonNames);
         setPokePosts(pokemonDetails);
         setFilteredPosts(pokemonDetails);
       } catch (err) {
@@ -109,20 +63,10 @@ export default function PokemonFetch() {
       setLoading(false);
     }
     fetchData();
-  }, [page, filter, searchQuery]);
+  }, [generation]);
 
-  const handleSearch = (query) => {
-    setSearchQuery(query);
-    setPage(1);
-  };
-
-  const handleFilterChange = (filter) => {
-    setFilter(filter);
-    setPage(1);
-  };
-
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
+  const handleGenerationChange = (gen) => {
+    setGeneration(gen);
   };
 
   if (error) {
@@ -132,7 +76,20 @@ export default function PokemonFetch() {
   return (
     <div className="pokemon-container">
       <h1 className="pokemon-title">Who do you choose?</h1>
-      <SearchBar onSearch={handleSearch} onFilterChange={handleFilterChange} />
+      <div className="generation-buttons">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((gen) => (
+          <button
+            key={gen}
+            onClick={() => handleGenerationChange(gen)}
+            className={`generation-button ${
+              generation === gen ? "active" : ""
+            }`}
+          >
+            Generation {gen}
+          </button>
+        ))}
+      </div>
+      <SearchBar onSearch={() => {}} onFilterChange={() => {}} />
       <div className="pokemon-grid">
         {filteredPosts.map((post) => (
           <Link key={post.id} href={`/Pokemon/${post.id}`}>
@@ -152,22 +109,6 @@ export default function PokemonFetch() {
         ))}
       </div>
       {loading && <div>Loading...</div>}
-      <div className="pagination">
-        <button
-          onClick={() => handlePageChange(page - 1)}
-          disabled={page === 1}
-          className="pagination-button"
-        >
-          Previous
-        </button>
-        <span className="pagination-info">Page {page}</span>
-        <button
-          onClick={() => handlePageChange(page + 1)}
-          className="pagination-button"
-        >
-          Next
-        </button>
-      </div>
     </div>
   );
 }
