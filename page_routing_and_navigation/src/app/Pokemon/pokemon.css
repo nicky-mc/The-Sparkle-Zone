@@ -142,7 +142,37 @@
 .load-more-button:hover {
   background-color: #0056b3;
 }
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
 
+.pagination-button {
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.pagination-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: #005bb5;
+}
+
+.pagination-info {
+  font-size: 16px;
+  font-weight: bold;
+}
 /* Global styles for body colors */
 :root {
   --background: #ffffff;

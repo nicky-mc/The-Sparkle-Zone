@@ -73,7 +73,7 @@ export default function PokemonFetch() {
   const [pokePosts, setPokePosts] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
   const [error, setError] = useState(null);
-  const [offset, setOffset] = useState(0);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -82,34 +82,31 @@ export default function PokemonFetch() {
     async function fetchData() {
       setLoading(true);
       try {
+        const offset = (page - 1) * LIMIT;
         const pokemonList = await fetchPokemonData(offset, filter, searchQuery);
         const pokemonDetails = await fetchPokemonDetails(pokemonList);
-        setPokePosts((prevPosts) => [...prevPosts, ...pokemonDetails]);
-        setFilteredPosts((prevPosts) => [...prevPosts, ...pokemonDetails]);
+        setPokePosts(pokemonDetails);
+        setFilteredPosts(pokemonDetails);
       } catch (err) {
         setError(err);
       }
       setLoading(false);
     }
     fetchData();
-  }, [offset, filter, searchQuery]);
+  }, [page, filter, searchQuery]);
 
   const handleSearch = (query) => {
     setSearchQuery(query);
-    setOffset(0);
-    setPokePosts([]);
-    setFilteredPosts([]);
+    setPage(1);
   };
 
   const handleFilterChange = (filter) => {
     setFilter(filter);
-    setOffset(0);
-    setPokePosts([]);
-    setFilteredPosts([]);
+    setPage(1);
   };
 
-  const loadMorePokemon = () => {
-    setOffset((prevOffset) => prevOffset + LIMIT);
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
   };
 
   if (error) {
@@ -139,11 +136,22 @@ export default function PokemonFetch() {
         ))}
       </div>
       {loading && <div>Loading...</div>}
-      {!loading && (
-        <button onClick={loadMorePokemon} className="load-more-button">
-          Load More
+      <div className="pagination">
+        <button
+          onClick={() => handlePageChange(page - 1)}
+          disabled={page === 1}
+          className="pagination-button"
+        >
+          Previous
         </button>
-      )}
+        <span className="pagination-info">Page {page}</span>
+        <button
+          onClick={() => handlePageChange(page + 1)}
+          className="pagination-button"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 }
