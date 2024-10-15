@@ -127,6 +127,7 @@
 .filter-select:hover {
   background-color: #f0f0f0; /* Lighter background on hover */
 }
+
 .load-more-button {
   display: block;
   margin: 20px auto;
@@ -141,6 +142,7 @@
 .load-more-button:hover {
   background-color: #0056b3;
 }
+
 /* Global styles for body colors */
 :root {
   --background: #ffffff;
@@ -158,4 +160,14 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: "Comic Neue", Arial, Helvetica, sans-serif;
+}
+
+/* Media query for the "Who do you choose?" text */
+@media (max-width: 600px) {
+  .pokemon-title {
+    @apply text-2xl; /* Adjust the font size for smaller screens */
+    text-align: center; /* Center the text */
+    padding: 10px; /* Add some padding */
+    word-wrap: break-word; /* Ensure text wraps within the container */
+  }
 }
