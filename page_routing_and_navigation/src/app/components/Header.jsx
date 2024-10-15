@@ -26,6 +26,11 @@ export default function Header() {
               Pokemon
             </Link>
           </li>
+          <li>
+            <Link href="/Counter" className="hover:underline">
+              Counter
+            </Link>
+          </li>
         </ul>
       </nav>
     </header>

@@ -60,6 +60,7 @@
 .pokemon-detail-info {
   @apply text-gray-600 dark:text-gray-400 mb-1;
 }
+
 .search-bar {
   @apply mb-4 flex items-center;
 }
@@ -85,6 +86,18 @@
 .search-button:hover {
   background-color: #3b82f6; /* Lighter blue on hover */
 }
+
+.filter-select {
+  @apply p-2 border border-gray-300 rounded-lg ml-2;
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s;
+}
+
+.filter-select:hover {
+  background-color: #f0f0f0; /* Lighter background on hover */
+}
+
 /* Global styles for body colors */
 :root {
   --background: #ffffff;
