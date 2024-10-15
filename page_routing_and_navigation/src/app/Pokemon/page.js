@@ -26,17 +26,23 @@ async function fetchPokemonDetails(pokemonNames) {
     const chunk = pokemonNames.slice(i, i + CONCURRENT_REQUESTS);
     const chunkDetails = await Promise.all(
       chunk.map(async (name) => {
-        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-        if (!res.ok) {
-          throw new Error(
-            `Failed to fetch details for ${name}: ${res.statusText}`
-          );
+        try {
+          const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+          if (!res.ok) {
+            console.error(
+              `Failed to fetch details for ${name}: ${res.statusText}`
+            );
+            return null;
+          }
+          const pokemonData = await res.json();
+          return pokemonData;
+        } catch (error) {
+          console.error(`Error fetching details for ${name}: ${error.message}`);
+          return null;
         }
-        const pokemonData = await res.json();
-        return pokemonData;
       })
     );
-    pokemonDetails.push(...chunkDetails);
+    pokemonDetails.push(...chunkDetails.filter((data) => data !== null));
   }
 
   return pokemonDetails;
