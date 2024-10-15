@@ -225,8 +225,10 @@
 }
 
 .pokemon-name {
-  font-size: 18px;
+  font-size: 20px; /* Increased font size */
   font-weight: bold;
+  color: #333; /* Darker color for better contrast */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); /* Subtle text shadow */
 }
 
 .pokemon-type {
