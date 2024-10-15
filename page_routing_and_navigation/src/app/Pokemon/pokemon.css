@@ -127,7 +127,20 @@
 .filter-select:hover {
   background-color: #f0f0f0; /* Lighter background on hover */
 }
+.load-more-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 
+.load-more-button:hover {
+  background-color: #0056b3;
+}
 /* Global styles for body colors */
 :root {
   --background: #ffffff;
