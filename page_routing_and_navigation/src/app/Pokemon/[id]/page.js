@@ -45,6 +45,30 @@ export default async function PokemonDetail({ params }) {
         </p>
         <p className="pokemon-detail-info">Height: {pokemon.height}</p>
         <p className="pokemon-detail-info">Weight: {pokemon.weight}</p>
+        <p className="pokemon-detail-info">
+          Abilities:{" "}
+          {pokemon.abilities
+            .map((abilityInfo) => abilityInfo.ability.name)
+            .join(", ")}
+        </p>
+        <div className="pokemon-detail-stats">
+          <h2 className="pokemon-detail-stats-title">Base Stats</h2>
+          <ul>
+            {pokemon.stats.map((statInfo) => (
+              <li key={statInfo.stat.name}>
+                {statInfo.stat.name}: {statInfo.base_stat}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="pokemon-detail-moves">
+          <h2 className="pokemon-detail-moves-title">Moves</h2>
+          <ul>
+            {pokemon.moves.slice(0, 10).map((moveInfo) => (
+              <li key={moveInfo.move.name}>{moveInfo.move.name}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
