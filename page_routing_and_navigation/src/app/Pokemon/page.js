@@ -13,6 +13,8 @@ async function fetchPokemonData(offset = 0, filter = "", searchQuery = "") {
     offset: offset,
   });
 
+  let pokemonList = [];
+
   if (filter.startsWith("generation-")) {
     const generation = parseInt(filter.split("-")[1], 10);
     const response = await fetch(
@@ -23,26 +25,40 @@ async function fetchPokemonData(offset = 0, filter = "", searchQuery = "") {
     }
     const data = await response.json();
     const pokemonNames = data.pokemon_species.map((species) => species.name);
-    params.append("name", pokemonNames.join(","));
-  } else if (filter.startsWith("type-")) {
-    const type = filter.split("-")[1];
-    params.append("type", type);
+    pokemonList = await Promise.all(
+      pokemonNames.map(async (name) => {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+        if (!res.ok) {
+          throw new Error(
+            `Failed to fetch details for ${name}: ${res.statusText}`
+          );
+        }
+        return res.json();
+      })
+    );
+  } else {
+    if (filter.startsWith("type-")) {
+      const type = filter.split("-")[1];
+      params.append("type", type);
+    }
+
+    if (searchQuery) {
+      params.append("name", searchQuery);
+    }
+
+    console.log("Fetching Pokémon with params:", params.toString());
+
+    const response = await fetch(
+      `https://pokeapi.co/api/v2/pokemon?${params.toString()}`
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    pokemonList = data.results;
   }
 
-  if (searchQuery) {
-    params.append("name", searchQuery);
-  }
-
-  console.log("Fetching Pokémon with params:", params.toString());
-
-  const response = await fetch(
-    `https://pokeapi.co/api/v2/pokemon?${params.toString()}`
-  );
-  if (!response.ok) {
-    throw new Error("Network response was not ok");
-  }
-  const data = await response.json();
-  return data.results;
+  return pokemonList;
 }
 
 async function fetchPokemonDetails(pokemonList) {
