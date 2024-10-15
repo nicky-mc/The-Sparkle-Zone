@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import md5 from "md5";
 import Link from "next/link";
+import MarvelSearch from "../components/MarvelSearch";
 import "./marvel.css";
 
 const publicKey = "acd8dde3905a52aee2158bcaad534542";
@@ -16,6 +17,7 @@ export default function MarvelPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     const fetchCharacters = async () => {
@@ -34,7 +36,9 @@ export default function MarvelPage() {
               hash: hash,
               limit: limit,
               offset: offset,
-              nameStartsWith: searchTerm || undefined,
+              ...(filter !== "all" && { nameStartsWith: filter }),
+              ...(filter === "all" &&
+                searchTerm && { nameStartsWith: searchTerm }),
             },
           }
         );
@@ -49,36 +53,30 @@ export default function MarvelPage() {
     };
 
     fetchCharacters();
-  }, [page, searchTerm]);
+  }, [page, searchTerm, filter]);
 
   const handleNextPage = () => {
     if (page < totalPages) {
       setPage(page + 1);
+      window.scrollTo(0, 0); // Scroll to top
     }
   };
 
   const handlePreviousPage = () => {
     if (page > 1) {
       setPage(page - 1);
+      window.scrollTo(0, 0); // Scroll to top
     }
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
+  const handleSearch = (term) => {
+    setSearchTerm(term);
     setPage(1);
-    // The API will handle the filtering based on the searchTerm
   };
 
-  const handleFilterChange = (e) => {
-    const filterValue = e.target.value.toLowerCase();
-    if (filterValue === "all") {
-      setFilteredCharacters(characters);
-    } else {
-      const filtered = characters.filter((character) =>
-        character.name.toLowerCase().startsWith(filterValue)
-      );
-      setFilteredCharacters(filtered);
-    }
+  const handleFilterChange = (filter) => {
+    setFilter(filter);
+    setPage(1);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -87,49 +85,10 @@ export default function MarvelPage() {
   return (
     <div className="marvel-container">
       <h1 className="marvel-title">Marvel Characters</h1>
-      <form onSubmit={handleSearch} className="search-bar-container">
-        <div className="search-bar">
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search characters..."
-            className="search-input"
-          />
-          <button type="submit" className="search-button">
-            Search
-          </button>
-        </div>
-      </form>
-      <select onChange={handleFilterChange} className="filter-select">
-        <option value="all">All Characters</option>
-        <option value="a">A</option>
-        <option value="b">B</option>
-        <option value="c">C</option>
-        <option value="d">D</option>
-        <option value="e">E</option>
-        <option value="f">F</option>
-        <option value="g">G</option>
-        <option value="h">H</option>
-        <option value="i">I</option>
-        <option value="j">J</option>
-        <option value="k">K</option>
-        <option value="l">L</option>
-        <option value="m">M</option>
-        <option value="n">N</option>
-        <option value="o">O</option>
-        <option value="p">P</option>
-        <option value="q">Q</option>
-        <option value="r">R</option>
-        <option value="s">S</option>
-        <option value="t">T</option>
-        <option value="u">U</option>
-        <option value="v">V</option>
-        <option value="w">W</option>
-        <option value="x">X</option>
-        <option value="y">Y</option>
-        <option value="z">Z</option>
-      </select>
+      <MarvelSearch
+        onSearch={handleSearch}
+        onFilterChange={handleFilterChange}
+      />
       <div className="marvel-grid">
         {filteredCharacters.map((character) => (
           <div key={character.id} className="marvel-card">
@@ -155,7 +114,6 @@ export default function MarvelPage() {
         <span>
           Page {page} of {totalPages}
         </span>
-
         <button onClick={handleNextPage} disabled={page === totalPages}>
           Next
         </button>
