@@ -11,6 +11,12 @@ export default function SearchBar({ onSearch, onFilterChange }) {
     onSearch(searchQuery);
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      onSearch(searchQuery);
+    }
+  };
+
   const handleFilterChange = (event) => {
     onFilterChange(event.target.value);
   };
@@ -24,6 +30,7 @@ export default function SearchBar({ onSearch, onFilterChange }) {
           className="search-input"
           value={searchQuery}
           onChange={handleSearchChange}
+          onKeyPress={handleKeyPress}
         />
         <button className="search-button" onClick={handleSearchClick}>
           Search
