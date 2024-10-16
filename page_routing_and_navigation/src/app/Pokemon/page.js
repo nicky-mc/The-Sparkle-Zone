@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Head from "next/head"; // Import Head component
 import SearchBar from "../components/SearchBar";
-import styles from "./pokemon.module.css"; // Use CSS module
+import styles from "./pokemon.css"; // Use CSS module
 
 const CONCURRENT_REQUESTS = 152; // Increased limit for concurrent requests
 const RETRY_LIMIT = 3; // Number of retry attempts for failed requests
