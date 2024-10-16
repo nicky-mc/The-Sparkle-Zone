@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { db } from "@/utils/dbconnection";
-import "../blog.css";
+import "./createBlog.css";
 
 const CreateBlog = () => {
   const [title, setTitle] = useState("");
