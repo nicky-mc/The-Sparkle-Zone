@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import db from "../../../utils/dbconnection";
+import db from "@/utils/dbconnection";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import "../blog.css";

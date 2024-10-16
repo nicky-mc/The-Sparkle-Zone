@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../../utils/supabaseclient";
-import db from "../../utils/dbconnection";
+import { supabase } from "@/utils/dbconnection";
+import db from "@/utils/supabaseclient";
 import "./createBlog.css";
 
 const CreateBlog = () => {
