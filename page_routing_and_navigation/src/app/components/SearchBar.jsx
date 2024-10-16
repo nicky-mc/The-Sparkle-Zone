@@ -20,7 +20,6 @@ export default function SearchBar({ onSearch, onFilterChange }) {
   const handleFilterChange = (event) => {
     onFilterChange(event.target.value);
   };
-
   return (
     <div className="search-bar-container">
       <div className="search-bar">
