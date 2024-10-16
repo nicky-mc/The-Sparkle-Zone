@@ -1,5 +1,7 @@
-import { useRouter } from "next/router";
-import db from "The-Sparkle-Zone/src/utils/dbconnection.js";
+"use client";
+
+import { useRouter } from "next/navigation";
+import db from "../../../utils/dbconnection";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import "../blog.css";

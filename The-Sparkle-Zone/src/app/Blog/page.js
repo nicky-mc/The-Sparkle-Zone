@@ -1,67 +1,158 @@
-import { useState, useEffect } from "react";
+"use client";
+
+import { useRouter } from "next/navigation";
+import db from "../../../utils/dbconnection";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import "./blog.css";
-import db from "../../utils/dbconnection";
+import "../blog.css";
 
-export const getPosts = async () => {
-  const posts = await db.query("SELECT * FROM posts");
-  wrangleData(posts);
-  return posts.rows.map((post) => ({
-    id: post.id,
-    image: post.image_url, // Ensure this matches your database schema
-    title: post.title,
-    author: post.author,
-    content: post.content.substring(0, 100), // Assuming the start of the content is the first 100 characters
-  }));
-
-  function wrangleData(posts) {
-    posts.rows.forEach((post) => {
-      post.created_at = new Date(post.created_at).toLocaleString();
-    });
-  }
-};
-
-const BlogPage = () => {
-  const [posts, setPosts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+const PostPage = () => {
+  const router = useRouter();
+  const { id } = router.query;
+  const [post, setPost] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState({ author: "", content: "" });
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      const postsData = await getPosts();
-      setPosts(postsData);
-    };
-    fetchPosts();
-  }, []);
+    // Simulate fetching the current user
+    const user = { id: 1, email: "cinimodazotrom@gmail.com" }; // Replace with actual user fetching logic
+    setCurrentUser(user);
 
-  const filteredPosts = posts.filter(
-    (post) =>
-      post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      post.author.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    if (id) {
+      const fetchPost = async () => {
+        const result = await db.query("SELECT * FROM posts WHERE id = $1", [
+          id,
+        ]);
+        if (result.rows.length > 0) {
+          setPost(result.rows[0]);
+        }
+      };
+      const fetchComments = async () => {
+        const result = await db.query(
+          "SELECT * FROM comments WHERE post_id = $1 ORDER BY created_at DESC",
+          [id]
+        );
+        setComments(result.rows);
+      };
+      fetchPost();
+      fetchComments();
+    }
+  }, [id]);
+
+  const handleCommentSubmit = async (e) => {
+    e.preventDefault();
+    await db.query(
+      "INSERT INTO comments (post_id, user_id, content) VALUES ($1, $2, $3)",
+      [id, currentUser.id, newComment.content]
+    );
+    setNewComment({ author: "", content: "" });
+    const result = await db.query(
+      "SELECT * FROM comments WHERE post_id = $1 ORDER BY created_at DESC",
+      [id]
+    );
+    setComments(result.rows);
+  };
+
+  const handleDeletePost = async () => {
+    if (post.user_id === currentUser.id) {
+      await db.query("DELETE FROM posts WHERE id = $1", [id]);
+      router.push("/blog");
+    } else {
+      alert("You are not authorized to delete this post.");
+    }
+  };
+
+  const handleDeleteComment = async (commentId) => {
+    await db.query("DELETE FROM comments WHERE id = $1", [commentId]);
+    const result = await db.query(
+      "SELECT * FROM comments WHERE post_id = $1 ORDER BY created_at DESC",
+      [id]
+    );
+    setComments(result.rows);
+  };
+
+  const handleLike = async (commentId) => {
+    await db.query("INSERT INTO likes (comment_id, user_id) VALUES ($1, $2)", [
+      commentId,
+      currentUser.id,
+    ]);
+    const result = await db.query(
+      "SELECT * FROM comments WHERE post_id = $1 ORDER BY created_at DESC",
+      [id]
+    );
+    setComments(result.rows);
+  };
+
+  if (!post || !currentUser) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="container mx-auto p-4">
-      <input
-        type="text"
-        placeholder="Search posts..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="search-input"
-      />
-      <div className="posts-list">
-        {filteredPosts.map((post) => (
-          <Link key={post.id} href={`/blog/${post.id}`}>
-            <div className="post-card">
-              <img src={post.image} alt={post.title} className="post-image" />
-              <h2 className="post-title">{post.title}</h2>
-              <p className="post-author">By {post.author}</p>
-              <p className="post-excerpt">{post.content}...</p>
-            </div>
-          </Link>
+    <div className="post-container">
+      <Link href="/blog">
+        <a className="return-button">Return to Blog</a>
+      </Link>
+      <h1 className="post-title">{post.title}</h1>
+      <img src={post.image_url} alt={post.title} className="post-image" />
+      <p className="post-author">By {post.author}</p>
+      <p className="post-content">{post.content}</p>
+      {post.user_id === currentUser.id && (
+        <button onClick={handleDeletePost} className="delete-button">
+          Delete Post
+        </button>
+      )}
+
+      <div className="comments-section">
+        <h2 className="comments-title">Comments</h2>
+        {comments.map((comment) => (
+          <div key={comment.id} className="comment">
+            <p className="comment-author">{comment.author}</p>
+            <p className="comment-content">{comment.content}</p>
+            <p className="comment-date">
+              {new Date(comment.created_at).toLocaleString()}
+            </p>
+            <button
+              onClick={() => handleLike(comment.id)}
+              className="like-button"
+            >
+              Like
+            </button>
+            <button
+              onClick={() => handleDeleteComment(comment.id)}
+              className="delete-comment-button"
+            >
+              Delete
+            </button>
+          </div>
         ))}
+        <form onSubmit={handleCommentSubmit} className="comment-form">
+          <input
+            type="text"
+            placeholder="Your name"
+            value={newComment.author}
+            onChange={(e) =>
+              setNewComment({ ...newComment, author: e.target.value })
+            }
+            className="comment-input"
+            required
+          />
+          <textarea
+            placeholder="Your comment"
+            value={newComment.content}
+            onChange={(e) =>
+              setNewComment({ ...newComment, content: e.target.value })
+            }
+            className="comment-textarea"
+            required
+          ></textarea>
+          <button type="submit" className="comment-button">
+            Submit
+          </button>
+        </form>
       </div>
     </div>
   );
 };
 
-export default BlogPage;
+export default PostPage;

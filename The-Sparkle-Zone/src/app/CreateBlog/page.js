@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { supabase } from "../../utils/supabaseclient";
 import db from "../../utils/dbconnection";
 import "./createBlog.css";
