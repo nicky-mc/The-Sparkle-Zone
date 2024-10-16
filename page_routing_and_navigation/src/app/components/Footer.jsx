@@ -1,8 +1,8 @@
-import styles from "./footer.module.css";
+import "./footer.module.css";
 
 export default function Footer() {
   return (
-    <footer className={styles.footer}>
+    <footer className="footer">
       <p>&copy; 2024 Nicky Mortoza-Cowles. All rights reserved.</p>
     </footer>
   );
