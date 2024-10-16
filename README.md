@@ -1,3 +1,3 @@
-# WEEK-8-Next.js
+# Welcome To The Sparkle Zone
 
 Planning
