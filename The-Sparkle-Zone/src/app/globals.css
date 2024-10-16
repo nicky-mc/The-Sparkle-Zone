@@ -36,8 +36,9 @@ h6 {
 }
 
 .footer {
-  background: var(--foreground);
-  color: var(--background);
+  background: black;
+  color: white;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.8);
   padding: 2rem;
   text-align: center;
   font-family: "Raleway";
