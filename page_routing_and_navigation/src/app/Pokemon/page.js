@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Head from "next/head"; // Import Head component
 import SearchBar from "../components/SearchBar";
-import "./pokemon.css";
+import styles from "./pokemon.module.css"; // Use CSS module
 
-const CONCURRENT_REQUESTS = 50; // Increased limit for concurrent requests
+const CONCURRENT_REQUESTS = 152; // Increased limit for concurrent requests
 const RETRY_LIMIT = 3; // Number of retry attempts for failed requests
 
 async function fetchPokemonDataByGeneration(generation) {
@@ -90,7 +91,7 @@ export default function PokemonFetch() {
   }
 
   return (
-    <div className="pokemon-container">
+    <div className={styles.pokemonContainer}>
       <Head>
         <title>Pokémon Explorer</title>
         <meta
@@ -103,14 +104,14 @@ export default function PokemonFetch() {
         />
         <meta name="author" content="Your Name" />
       </Head>
-      <h1 className="pokemon-title">Who do you choose?</h1>
-      <div className="generation-buttons">
+      <h1 className={styles.pokemonTitle}>Who do you choose?</h1>
+      <div className={styles.generationButtons}>
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((gen) => (
           <button
             key={gen}
             onClick={() => handleGenerationChange(gen)}
-            className={`generation-button ${
-              generation === gen ? "active" : ""
+            className={`${styles.generationButton} ${
+              generation === gen ? styles.active : ""
             }`}
           >
             Generation {gen}
@@ -118,19 +119,19 @@ export default function PokemonFetch() {
         ))}
       </div>
       <SearchBar onSearch={() => {}} onFilterChange={() => {}} />
-      <div className="pokemon-grid">
+      <div className={styles.pokemonGrid}>
         {filteredPosts.map((post) => (
           <Link key={post.id} href={`/Pokemon/${post.id}`}>
-            <div className="pokemon-card">
-              <h2 className="pokemon-name">{post.name}</h2>
-              <p className="pokemon-type">
+            <div className={styles.pokemonCard}>
+              <h2 className={styles.pokemonName}>{post.name}</h2>
+              <p className={styles.pokemonType}>
                 Type:{" "}
                 {post.types.map((typeInfo) => typeInfo.type.name).join(", ")}
               </p>
               <img
                 src={post.sprites.front_default}
                 alt={post.name}
-                className="pokemon-image"
+                className={styles.pokemonImage}
               />
             </div>
           </Link>
