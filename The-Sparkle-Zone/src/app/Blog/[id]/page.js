@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import supabase from "@/utils/supabaseclient";
-import "./blog.css";
+import { db } from "@/utils/dbconnection";
+import "../blog.css";
 
 const PostPage = ({ params }) => {
   const { id } = params;
@@ -20,30 +20,25 @@ const PostPage = ({ params }) => {
     setCurrentUser(user);
 
     const fetchPost = async () => {
-      const { data, error } = await supabase
-        .from("posts")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) {
+      try {
+        const result = await db.query("SELECT * FROM posts WHERE id = $1", [
+          id,
+        ]);
+        setPost(result.rows[0]);
+      } catch (error) {
         console.error("Error fetching post:", error);
-      } else {
-        setPost(data);
       }
     };
 
     const fetchComments = async () => {
-      const { data, error } = await supabase
-        .from("comments")
-        .select("*")
-        .eq("post_id", id)
-        .order("created_at", { ascending: false });
-
-      if (error) {
+      try {
+        const result = await db.query(
+          "SELECT * FROM comments WHERE post_id = $1 ORDER BY created_at DESC",
+          [id]
+        );
+        setComments(result.rows);
+      } catch (error) {
         console.error("Error fetching comments:", error);
-      } else {
-        setComments(data);
       }
     };
 
@@ -53,38 +48,29 @@ const PostPage = ({ params }) => {
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    const { error } = await supabase.from("comments").insert({
-      post_id: id,
-      author: newComment.author,
-      content: newComment.content,
-    });
-
-    if (error) {
-      console.error("Error adding comment:", error);
-    } else {
+    try {
+      await db.query(
+        "INSERT INTO comments (post_id, author, content) VALUES ($1, $2, $3)",
+        [id, newComment.author, newComment.content]
+      );
       setNewComment({ author: "", content: "" });
-      const { data, error: fetchError } = await supabase
-        .from("comments")
-        .select("*")
-        .eq("post_id", id)
-        .order("created_at", { ascending: false });
-
-      if (fetchError) {
-        console.error("Error fetching comments:", fetchError);
-      } else {
-        setComments(data);
-      }
+      const result = await db.query(
+        "SELECT * FROM comments WHERE post_id = $1 ORDER BY created_at DESC",
+        [id]
+      );
+      setComments(result.rows);
+    } catch (error) {
+      console.error("Error adding comment:", error);
     }
   };
 
   const handleDeletePost = async () => {
     if (post.user_id === currentUser.id) {
-      const { error } = await supabase.from("posts").delete().eq("id", id);
-
-      if (error) {
-        console.error("Error deleting post:", error);
-      } else {
+      try {
+        await db.query("DELETE FROM posts WHERE id = $1", [id]);
         router.push("/blog");
+      } catch (error) {
+        console.error("Error deleting post:", error);
       }
     } else {
       alert("You are not authorized to delete this post.");
@@ -92,47 +78,28 @@ const PostPage = ({ params }) => {
   };
 
   const handleDeleteComment = async (commentId) => {
-    const { error } = await supabase
-      .from("comments")
-      .delete()
-      .eq("id", commentId);
-
-    if (error) {
+    try {
+      await db.query("DELETE FROM comments WHERE id = $1", [commentId]);
+      const result = await db.query(
+        "SELECT * FROM comments WHERE post_id = $1 ORDER BY created_at DESC",
+        [id]
+      );
+      setComments(result.rows);
+    } catch (error) {
       console.error("Error deleting comment:", error);
-    } else {
-      const { data, error: fetchError } = await supabase
-        .from("comments")
-        .select("*")
-        .eq("post_id", id)
-        .order("created_at", { ascending: false });
-
-      if (fetchError) {
-        console.error("Error fetching comments:", fetchError);
-      } else {
-        setComments(data);
-      }
     }
   };
 
   const handleLike = async (commentId) => {
-    const { error } = await supabase.from("likes").insert({
-      comment_id: commentId,
-    });
-
-    if (error) {
+    try {
+      await db.query("INSERT INTO likes (comment_id) VALUES ($1)", [commentId]);
+      const result = await db.query(
+        "SELECT * FROM comments WHERE post_id = $1 ORDER BY created_at DESC",
+        [id]
+      );
+      setComments(result.rows);
+    } catch (error) {
       console.error("Error liking comment:", error);
-    } else {
-      const { data, error: fetchError } = await supabase
-        .from("comments")
-        .select("*")
-        .eq("post_id", id)
-        .order("created_at", { ascending: false });
-
-      if (fetchError) {
-        console.error("Error fetching comments:", fetchError);
-      } else {
-        setComments(data);
-      }
     }
   };
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import supabase from "@/utils/supabaseclient";
+import { db } from "@/utils/dbconnection";
 import "./blog.css";
 
 const Blog = () => {
@@ -11,12 +11,11 @@ const Blog = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const { data, error } = await supabase.from("posts").select("*");
-
-      if (error) {
+      try {
+        const result = await db.query("SELECT * FROM posts");
+        setPosts(result.rows);
+      } catch (error) {
         console.error("Error fetching posts:", error);
-      } else {
-        setPosts(data);
       }
     };
 

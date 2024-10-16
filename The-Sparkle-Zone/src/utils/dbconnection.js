@@ -1,13 +1,15 @@
+import { createClient } from "@supabase/supabase-js";
 import pg from "pg";
 
-// This function connects to the database using the connection string and returns the connection
-export default function connect() {
-  const dbConnectionString = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const db = new pg.Pool({
-    connectionString: dbConnectionString,
-  });
-  return db;
-}
+// Supabase client setup
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PASSWORD;
+export const supabase = createClient(supabaseUrl, supabaseKey);
 
-// This exports the db connection to be used in other files
-export const db = connect();
+// PostgreSQL connection setup
+const dbConnectionString = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const db = new pg.Pool({
+  connectionString: dbConnectionString,
+});
+
+export { db };

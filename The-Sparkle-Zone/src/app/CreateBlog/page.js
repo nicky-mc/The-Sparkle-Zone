@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import supabase from "@/utils/supabaseclient";
-import "./createBlog.css";
+import { db } from "@/utils/dbconnection";
+import "../blog.css";
 
 const CreateBlog = () => {
   const [title, setTitle] = useState("");
@@ -21,18 +21,14 @@ const CreateBlog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { error } = await supabase.from("posts").insert({
-      title,
-      author,
-      content,
-      image_url: image,
-      user_id: currentUser.id,
-    });
-
-    if (error) {
-      console.error("Error creating post:", error);
-    } else {
+    try {
+      await db.query(
+        "INSERT INTO posts (title, author, content, image_url, user_id) VALUES ($1, $2, $3, $4, $5)",
+        [title, author, content, image, currentUser.id]
+      );
       router.push("/blog");
+    } catch (error) {
+      console.error("Error creating post:", error);
     }
   };
 
