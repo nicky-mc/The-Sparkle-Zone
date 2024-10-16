@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { supabase } from "@/utils/supabaseclient";
 import "./blog.css";
 
 const Blog = () => {
@@ -10,9 +11,13 @@ const Blog = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const response = await fetch("/api/posts");
-      const data = await response.json();
-      setPosts(data);
+      const { data, error } = await supabase.from("posts").select("*");
+
+      if (error) {
+        console.error("Error fetching posts:", error);
+      } else {
+        setPosts(data);
+      }
     };
 
     fetchPosts();

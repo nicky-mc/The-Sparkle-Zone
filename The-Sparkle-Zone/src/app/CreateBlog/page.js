@@ -1,72 +1,40 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "../../utils/supabaseclient";
+import { supabase } from "@/utils/supabaseclient";
 import "./createBlog.css";
 
 const CreateBlog = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
-  const router = useRouter();
+  const [image, setImage] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     // Simulate fetching the current user
     const user = { id: 1, email: "cinimodazotrom@gmail.com" }; // Replace with actual user fetching logic
     setCurrentUser(user);
-    if (user.email !== "cinimodazotrom@gmail.com") {
-      router.push("/blog"); // Redirect if not authorized
-    }
   }, []);
-
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    const fileName = `${Date.now()}_${file.name}`;
-    const { data, error } = await supabase.storage
-      .from("your_bucket_name") // Replace with your actual bucket name
-      .upload(fileName, file);
-
-    if (error) {
-      console.error("Error uploading image:", error);
-      return;
-    }
-
-    const imageUrl = supabase.storage
-      .from("your_bucket_name") // Replace with your actual bucket name
-      .getPublicUrl(fileName).publicURL;
-
-    setImage(imageUrl);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("/api/db", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        title,
-        author,
-        content,
-        image,
-        userId: currentUser.id,
-      }),
+    const { error } = await supabase.from("posts").insert({
+      title,
+      author,
+      content,
+      image_url: image,
+      user_id: currentUser.id,
     });
 
-    if (response.ok) {
-      router.push("/blog");
+    if (error) {
+      console.error("Error creating post:", error);
     } else {
-      console.error("Error creating post");
+      router.push("/blog");
     }
   };
-
-  if (!currentUser) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="create-blog-container">
@@ -88,6 +56,13 @@ const CreateBlog = () => {
           className="create-blog-input"
           required
         />
+        <input
+          type="text"
+          placeholder="Image URL"
+          value={image}
+          onChange={(e) => setImage(e.target.value)}
+          className="create-blog-input"
+        />
         <textarea
           placeholder="Content"
           value={content}
@@ -95,12 +70,6 @@ const CreateBlog = () => {
           className="create-blog-textarea"
           required
         ></textarea>
-        <input
-          type="file"
-          onChange={handleImageUpload}
-          className="create-blog-input"
-          required
-        />
         <button type="submit" className="create-blog-button">
           Create Post
         </button>
