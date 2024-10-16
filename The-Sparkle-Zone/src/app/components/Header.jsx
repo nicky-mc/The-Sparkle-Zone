@@ -38,16 +38,6 @@ export default function Header() {
               Marvel
             </Link>
           </li>
-          <li className="nav-item mb-2 md:mb-0">
-            <Link href="/Blog" className="nav-link hover:underline">
-              Blog
-            </Link>
-          </li>
-          <li className="nav-item mb-2 md:mb-0">
-            <Link href="/CreateBlog" className="nav-link hover:underline">
-              Create Blog
-            </Link>
-          </li>
         </ul>
       </nav>
     </header>
