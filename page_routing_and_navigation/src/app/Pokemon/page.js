@@ -91,6 +91,18 @@ export default function PokemonFetch() {
 
   return (
     <div className="pokemon-container">
+      <Head>
+        <title>Pokémon Explorer</title>
+        <meta
+          name="description"
+          content="Explore Pokémon by generation and find detailed information about each Pokémon."
+        />
+        <meta
+          name="keywords"
+          content="Pokémon, Generation, Pokedex, Pokémon Details, Pokémon Types"
+        />
+        <meta name="author" content="Your Name" />
+      </Head>
       <h1 className="pokemon-title">Who do you choose?</h1>
       <div className="generation-buttons">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((gen) => (
