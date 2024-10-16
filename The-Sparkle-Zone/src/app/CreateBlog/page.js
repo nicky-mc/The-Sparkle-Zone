@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/utils/supabaseclient";
+import supabase from "@/utils/supabaseclient";
 import "./createBlog.css";
 
 const CreateBlog = () => {

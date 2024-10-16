@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { supabase } from "@/utils/supabaseclient";
+import supabase from "@/utils/supabaseclient";
 import "./blog.css";
 
 const Blog = () => {
