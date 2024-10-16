@@ -65,6 +65,7 @@ export default function PokemonFetch() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [generation, setGeneration] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -83,6 +84,18 @@ export default function PokemonFetch() {
   }, [generation]);
 
   const handleGenerationChange = (gen) => {
+    setGeneration(gen);
+  };
+
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    const filtered = pokePosts.filter((post) =>
+      post.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredPosts(filtered);
+  };
+
+  const handleFilterChange = (gen) => {
     setGeneration(gen);
   };
 
@@ -118,7 +131,7 @@ export default function PokemonFetch() {
           </button>
         ))}
       </div>
-      <SearchBar onSearch={() => {}} onFilterChange={() => {}} />
+      <SearchBar onSearch={handleSearch} onFilterChange={handleFilterChange} />
       <div className="pokemon-grid">
         {filteredPosts.map((post) => (
           <Link key={post.id} href={`/Pokemon/${post.id}`}>
