@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/utils/dbconnection";
-import db from "@/utils/supabaseclient";
+import { supabase } from "../../utils/supabaseclient";
 import "./createBlog.css";
 
 const CreateBlog = () => {
@@ -44,11 +43,25 @@ const CreateBlog = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await db.query(
-      "INSERT INTO posts (title, author, content, image_url, user_id) VALUES ($1, $2, $3, $4, $5)",
-      [title, author, content, image, currentUser.id]
-    );
-    router.push("/blog");
+    const response = await fetch("/api/db", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title,
+        author,
+        content,
+        image,
+        userId: currentUser.id,
+      }),
+    });
+
+    if (response.ok) {
+      router.push("/blog");
+    } else {
+      console.error("Error creating post");
+    }
   };
 
   if (!currentUser) {

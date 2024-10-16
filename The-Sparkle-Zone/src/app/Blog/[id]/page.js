@@ -1,14 +1,12 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import db from "@/utils/dbconnection";
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import "../blog.css";
 
-const PostPage = () => {
-  const router = useRouter();
-  const { id } = router.query;
+const PostPage = ({ params }) => {
+  const { id } = params;
   const [post, setPost] = useState(null);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState({ author: "", content: "" });
@@ -19,44 +17,46 @@ const PostPage = () => {
     const user = { id: 1, email: "cinimodazotrom@gmail.com" }; // Replace with actual user fetching logic
     setCurrentUser(user);
 
-    if (id) {
-      const fetchPost = async () => {
-        const result = await db.query("SELECT * FROM posts WHERE id = $1", [
-          id,
-        ]);
-        if (result.rows.length > 0) {
-          setPost(result.rows[0]);
-        }
-      };
-      const fetchComments = async () => {
-        const result = await db.query(
-          "SELECT * FROM comments WHERE post_id = $1 ORDER BY created_at DESC",
-          [id]
-        );
-        setComments(result.rows);
-      };
-      fetchPost();
-      fetchComments();
-    }
+    const fetchPost = async () => {
+      const response = await fetch(`/api/posts/${id}`);
+      const data = await response.json();
+      setPost(data);
+    };
+
+    const fetchComments = async () => {
+      const response = await fetch(`/api/posts/${id}/comments`);
+      const data = await response.json();
+      setComments(data);
+    };
+
+    fetchPost();
+    fetchComments();
   }, [id]);
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    await db.query(
-      "INSERT INTO comments (post_id, user_id, content) VALUES ($1, $2, $3)",
-      [id, currentUser.id, newComment.content]
-    );
+    await fetch(`/api/posts/${id}/comments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        author: newComment.author,
+        content: newComment.content,
+        userId: currentUser.id,
+      }),
+    });
     setNewComment({ author: "", content: "" });
-    const result = await db.query(
-      "SELECT * FROM comments WHERE post_id = $1 ORDER BY created_at DESC",
-      [id]
-    );
-    setComments(result.rows);
+    const response = await fetch(`/api/posts/${id}/comments`);
+    const data = await response.json();
+    setComments(data);
   };
 
   const handleDeletePost = async () => {
     if (post.user_id === currentUser.id) {
-      await db.query("DELETE FROM posts WHERE id = $1", [id]);
+      await fetch(`/api/posts/${id}`, {
+        method: "DELETE",
+      });
       router.push("/blog");
     } else {
       alert("You are not authorized to delete this post.");
@@ -64,24 +64,21 @@ const PostPage = () => {
   };
 
   const handleDeleteComment = async (commentId) => {
-    await db.query("DELETE FROM comments WHERE id = $1", [commentId]);
-    const result = await db.query(
-      "SELECT * FROM comments WHERE post_id = $1 ORDER BY created_at DESC",
-      [id]
-    );
-    setComments(result.rows);
+    await fetch(`/api/posts/${id}/comments/${commentId}`, {
+      method: "DELETE",
+    });
+    const response = await fetch(`/api/posts/${id}/comments`);
+    const data = await response.json();
+    setComments(data);
   };
 
   const handleLike = async (commentId) => {
-    await db.query("INSERT INTO likes (comment_id, user_id) VALUES ($1, $2)", [
-      commentId,
-      currentUser.id,
-    ]);
-    const result = await db.query(
-      "SELECT * FROM comments WHERE post_id = $1 ORDER BY created_at DESC",
-      [id]
-    );
-    setComments(result.rows);
+    await fetch(`/api/posts/${id}/comments/${commentId}/like`, {
+      method: "POST",
+    });
+    const response = await fetch(`/api/posts/${id}/comments`);
+    const data = await response.json();
+    setComments(data);
   };
 
   if (!post || !currentUser) {
