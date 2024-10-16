@@ -35,6 +35,13 @@ h6 {
   font-family: "Raleway";
 }
 
+.footer {
+  background: var(--foreground);
+  color: var(--background);
+  padding: 2rem;
+  text-align: center;
+  font-family: "Raleway";
+}
 @layer utilities {
   .text-balance {
     text-wrap: balance;
