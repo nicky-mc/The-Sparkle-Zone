@@ -1,11 +1,14 @@
 import pg from pg;
-//this is to connect to the database using the connection string and return the connection
+
+
+// This function connects to the database using the connection string and returns the connection
 function connect() {
     const dbConnectionString = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const db = new pg.pool({
+    const db = new pg.Pool({
         connectionString: dbConnectionString,
     });
     return db;
 }
-//this is to export the db connection to be used in other files
+
+// This exports the db connection to be used in other files
 export const db = connect();
