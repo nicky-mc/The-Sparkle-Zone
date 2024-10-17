@@ -5,7 +5,11 @@ import "./blog.css";
 export default async function Page() {
   let posts = [];
   try {
-    const result = await db.query(`SELECT * FROM posts`);
+    const result = await db.query(`
+      SELECT posts.*, categories.name as category
+      FROM posts
+      LEFT JOIN categories ON posts.category_id = categories.id
+    `);
     posts = result.rows;
   } catch (error) {
     console.error("Error fetching posts:", error);
