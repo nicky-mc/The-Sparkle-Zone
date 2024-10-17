@@ -115,7 +115,7 @@ export default function PokemonFetch() {
           name="keywords"
           content="Pokémon, Generation, Pokedex, Pokémon Details, Pokémon Types"
         />
-        <meta name="author" content="Your Name" />
+        <meta name="author" content="Nicky Mortoza-Cowles" />
       </Head>
       <h1 className="pokemon-title">Who do you choose?</h1>
       <div className="generation-buttons">
