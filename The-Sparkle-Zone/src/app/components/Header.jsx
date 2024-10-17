@@ -14,6 +14,11 @@ export default function Header() {
             </Link>
           </li>
           <li className="nav-item mb-2 md:mb-0">
+            <Link href="/Blog" className="nav-link hover:underline">
+              Blog
+            </Link>
+          </li>
+          <li className="nav-item mb-2 md:mb-0">
             <Link href="/About" className="nav-link hover:underline">
               About
             </Link>
