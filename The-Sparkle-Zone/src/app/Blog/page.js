@@ -16,6 +16,7 @@ export default async function Page() {
       {posts.length > 0 ? (
         posts.map((post) => (
           <div key={post.id} className="blog_item">
+            <h4 className="category">{post.category}</h4>
             <h2 className="title">{post.title}</h2>
             <h3 className="author">{post.author}</h3>
             <img src={post.image_url} alt="blog image" className="image" />
