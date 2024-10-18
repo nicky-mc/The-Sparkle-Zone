@@ -75,11 +75,14 @@ export default function Header() {
           <Link href="/Pokemon" className="hover:underline">
             Pokemon
           </Link>
-          <Link href="/Counter" className="hover:underline">
-            Counter
-          </Link>
           <Link href="/Marvel" className="hover:underline">
             Marvel
+          </Link>
+          <Link href="/RicknMorty" className="hover:underline">
+            Rick and Morty
+          </Link>
+          <Link href="/Counter" className="hover:underline">
+            Counter
           </Link>
         </nav>
       </div>
