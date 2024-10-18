@@ -1,0 +1,112 @@
+.character-list {
+  padding: 20px;
+  text-align: center; /* Center align the title */
+}
+.search-container {
+  display: flex; /* Align input and button horizontally */
+  justify-content: center; /* Center align the search elements */
+  margin-bottom: 20px;
+}
+
+.search-input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%; /* Full width */
+  max-width: 400px; /* Limit max width */
+  margin-right: 10px; /* Space between input and button */
+  font-family: raleway;
+  color: black; /* Text color */
+}
+
+.search-button {
+  padding: 10px 15px; /* Add padding */
+  border: none; /* Remove default border */
+  border-radius: 5px; /* Rounded corners */
+  background-color: #0070f3; /* Background color */
+  color: white; /* Text color */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.search-button:hover {
+  background-color: #005bb5; /* Darker shade on hover */
+}
+
+.character-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(200px, 1fr)
+  ); /* Responsive grid */
+  gap: 20px; /* Space between cards */
+}
+
+.character-card {
+  background-color: #f9f9f9; /* Light background for cards */
+  border: 1px solid #ddd; /* Border around cards */
+  border-radius: 8px; /* Rounded corners */
+  padding: 10px; /* Inner spacing */
+  transition: transform 0.2s; /* Animation for hover effect */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.character-card:hover {
+  transform: scale(1.05); /* Scale up on hover */
+}
+
+.character-image {
+  width: 100%; /* Make images responsive */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 5px; /* Rounded image corners */
+}
+
+.character-card h2 {
+  font-size: 1.2rem; /* Adjust title size */
+  margin: 10px 0; /* Space around title */
+  color: black;
+  font-family: raleway;
+}
+
+.character-card p {
+  margin: 5px 0; /* Space around paragraphs */
+  font-family: raleway;
+}
+.character-detail {
+  padding: 40px; /* Increased padding for better spacing */
+  border-radius: 8px;
+  margin-top: 20px;
+  text-align: center; /* Center align text */
+}
+
+.character-info {
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Center items vertically */
+  justify-content: center; /* Center items horizontally */
+}
+
+.character-image {
+  width: 300px; /* Set a reasonable size for the image */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 5px; /* Rounded image corners */
+  margin-right: 20px; /* Space between image and text */
+}
+
+.character-text {
+  text-align: left; /* Align text to the left */
+  max-width: 500px; /* Limit the text block width */
+}
+
+.character-detail h1 {
+  font-size: 2rem; /* Increase heading size */
+  margin-bottom: 10px; /* Space below heading */
+}
+
+.character-detail p {
+  font-size: 1.2rem; /* Increase font size for better readability */
+  margin: 5px 0; /* Space around paragraphs */
+}
+
+.character-detail h2 {
+  font-size: 1.5rem; /* Adjust subheading size */
+  margin-top: 15px; /* Space above subheadings */
+}
