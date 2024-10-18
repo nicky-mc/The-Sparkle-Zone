@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.1.5",
+    "@supabase/supabase-js": "^2.45.4",
     "@tailwindcss/forms": "^0.5.9",
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
@@ -21,8 +23,7 @@
     "pg": "^8.13.0",
     "prettier": "^3.3.3",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "@supabase/supabase-js": "^2.45.4"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",

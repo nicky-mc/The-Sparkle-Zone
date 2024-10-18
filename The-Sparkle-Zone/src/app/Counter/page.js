@@ -1,20 +1,10 @@
-"use client";
-
-import React, { useState } from "react";
-import CounterButton from "../components/Counter";
-import "./counter.css";
+import Counter from "../components/Counter";
 
 export default function CounterPage() {
-  const [count, setCount] = useState(0);
-
-  const handleIncrement = () => {
-    setCount(count + 1);
-  };
-
   return (
-    <div className="counter-container">
-      <h1 className="counter-title">Counter: {count}</h1>
-      <CounterButton onClick={handleIncrement} />
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-blue-400 via-pink-300 to-blue-400 text-white">
+      <h1 className="text-4xl font-bold mb-6">Clicker Game</h1>
+      <Counter /> {/* The Counter component is included here */}
     </div>
   );
 }

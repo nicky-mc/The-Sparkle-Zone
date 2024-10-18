@@ -1,0 +1,28 @@
+.create-post-container {
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.create-post-container input,
+.create-post-container textarea,
+.create-post-container select {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.create-post-container button {
+  padding: 1rem;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.create-post-container button:hover {
+  background-color: #005bb5;
+}
