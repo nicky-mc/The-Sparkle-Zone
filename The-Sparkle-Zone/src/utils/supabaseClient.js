@@ -1,12 +1,8 @@
+// utils/supabaseClient.js
 import { createClient } from "@supabase/supabase-js";
 
-// Supabase client setup for Supabase API interactions
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PASSWORD;
+const supabaseUrl = "https://hasatlmjddrwgmaaosen.supabase.co";
+const supabaseAnonKey =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhhc2F0bG1qZGRyd2dtYWFvc2VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjkwNzMzNzYsImV4cCI6MjA0NDY0OTM3Nn0.VdbiBT7ArnJF7sVJn8QYbpdWXXbqdNUvIL2xrIfdsWc"; // Replace with your actual anon key
 
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error("Supabase URL and API key are required.");
-}
-
-// Create and export the Supabase client
-export const supabase = createClient(supabaseUrl, supabaseKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

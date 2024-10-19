@@ -1,100 +1,72 @@
-// src/app/Blog/[id]/page.js
+import { db } from "@/utils/dbconnection";
+import { supabase } from "@/utils/supabaseClient"; // Adjust the import path as necessary
+import Image from "next/image"; // Import the Image component
 
-"use client"; // Mark this as a Client Component
+export default async function BlogPostPage({ params }) {
+  const { id } = params; // Extract post id from params
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router"; // Make sure to import useRouter
-import Link from "next/link"; // For navigation
-import "../blog.css"; // Your CSS file
+  // Fetch the blog post by id
+  const postResult = await db.query("SELECT * FROM posts WHERE id = $1", [id]);
+  const post = postResult.rows[0];
 
-const PostDetailPage = () => {
-  const router = useRouter(); // Get router instance
-  const { id } = router.query; // Get the post ID from the URL
-  const [post, setPost] = useState(null);
-  const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  if (!post) {
+    return <p>Post not found.</p>;
+  }
 
-  useEffect(() => {
-    const fetchPostDetails = async () => {
-      if (!id) return; // Exit if ID is not available
+  // Extract the filename from the image_url if it contains a full URL
+  const imageFilename = post.image_url.split("/").pop(); // Get the last part of the URL
+  const imageUrl = `https://hasatlmjddrwgmaaosen.supabase.co/storage/v1/object/public/image_for_url/${imageFilename}`;
 
-      try {
-        const postResponse = await fetch(`/api/posts/${id}`); // Fetch post details
-        if (!postResponse.ok) throw new Error("Failed to fetch post");
-        const postData = await postResponse.json();
-        setPost(postData);
-
-        const commentsResponse = await fetch(`/api/posts/${id}/comments`); // Fetch comments
-        if (!commentsResponse.ok) throw new Error("Failed to fetch comments");
-        const commentsData = await commentsResponse.json();
-        setComments(commentsData);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPostDetails();
-  }, [id]); // Run the effect when ID changes
-
-  const handleCommentSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(`/api/posts/${id}/comments`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content: newComment }), // Send the new comment
-      });
-
-      if (!response.ok) throw new Error("Failed to add comment");
-      const newCommentData = await response.json();
-      setComments((prevComments) => [...prevComments, newCommentData]); // Update comments
-      setNewComment(""); // Reset input field
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  if (loading) return <div>Loading post...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!post) return <div>Post not found</div>;
+  // Check if the image URL is valid
+  const isImageValid = await checkImageExists(imageUrl);
 
   return (
-    <div className="post-detail-container">
-      <h1>{post.title}</h1>
-      <h3>{post.author}</h3>
-      {post.image_url && <img src={post.image_url} alt={post.title} />}
-      <p>{post.content}</p>
-
-      <h2>Comments</h2>
-      <form onSubmit={handleCommentSubmit}>
-        <textarea
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          placeholder="Add a comment"
-          required
-        />
-        <button type="submit">Submit</button>
-      </form>
-
-      <div>
-        {comments.length > 0 ? (
-          comments.map((comment) => (
-            <div key={comment.id}>
-              <p>{comment.content}</p>
-            </div>
-          ))
+    <div className="blog-post p-4">
+      <div className="flex flex-wrap md:flex-nowrap">
+        {" "}
+        {/* Use flex-wrap on smaller screens */}
+        {isImageValid ? (
+          <div className="relative w-full md:w-1/3 mb-4 md:mb-0">
+            {" "}
+            {/* Adjust for spacing */}
+            <Image
+              src={imageUrl}
+              alt={post.title}
+              width={300} // Adjusted width for larger image
+              height={200} // Adjusted height for larger image
+              className="w-full h-auto object-cover rounded-md" // Ensure responsive and rounded
+              priority // Add priority property
+            />
+          </div>
         ) : (
-          <p>No comments yet.</p>
+          <div className="relative w-full md:w-1/3 mb-4 md:mb-0">
+            <img
+              src="/images/placeholder.jpg" // Updated path to the placeholder image
+              alt="Placeholder"
+              className="w-full h-auto object-cover rounded-md"
+            />
+          </div>
         )}
+        <div className="w-full md:w-2/3 md:pl-6">
+          <h1 className="text-3xl font-bold font-raleway mb-2">{post.title}</h1>
+          <p className="text-gray-600 mb-4">Author: {post.author}</p>
+          <div className="content">
+            <p>{post.content}</p>
+          </div>
+        </div>
       </div>
-
-      <Link href="/Blog">Back to Blog</Link>
     </div>
   );
-};
+}
 
-export default PostDetailPage;
+// Function to check if the image exists
+async function checkImageExists(url) {
+  try {
+    console.log("Checking image URL:", url); // Log the URL for debugging
+    const res = await fetch(url, { method: "HEAD" });
+    return res.ok; // Returns true if the image exists
+  } catch (error) {
+    console.error("Error checking image:", error);
+    return false; // Return false if there's an error
+  }
+}
