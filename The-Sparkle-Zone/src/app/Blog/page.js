@@ -1,5 +1,6 @@
 import { db } from "@/utils/dbconnection";
 import Link from "next/link";
+import Image from "next/image";
 
 // Fetch posts from the database
 async function getPosts(searchQuery) {
@@ -23,9 +24,12 @@ export default async function BlogListPage({ searchParams }) {
   const posts = await getPosts(searchQuery);
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-center text-amber-600">
-        Blog Posts
+    <div
+      className="container mx-auto p-4 bg-gradient-to-b from-blue-400 via-pink-300 to-blue-400 dark:bg-black text-white dark:text-white transition-colors duration-300"
+      style={{ fontFamily: "Raleway, sans-serif" }}
+    >
+      <h1 className="text-3xl font-bold mb-6 text-center text-blue-500 dark:text-pink-300">
+        Welcome to My Many Ramblings
       </h1>
 
       {/* Search form - uses GET to pass the search query in the URL */}
@@ -35,11 +39,11 @@ export default async function BlogListPage({ searchParams }) {
           name="search"
           placeholder="Search by title or author"
           defaultValue={searchQuery}
-          className="border p-2 rounded-l-lg w-64"
+          className="border p-2 rounded-l-lg w-64 bg-white text-black dark:bg-gray-800 dark:text-white"
         />
         <button
           type="submit"
-          className="p-2 bg-blue-500 text-white rounded-r-lg"
+          className="p-2 bg-blue-500 text-white rounded-r-lg dark:bg-gray-600 dark:text-black"
         >
           Search
         </button>
@@ -52,25 +56,49 @@ export default async function BlogListPage({ searchParams }) {
             No posts found.
           </p>
         ) : (
-          posts.map((post) => (
-            <div
-              key={post.id}
-              className="bg-white shadow-md rounded-lg p-4 cursor-pointer hover:shadow-lg transition-shadow duration-300"
-            >
-              {/* Use Link to navigate to the detailed post page */}
-              <Link
-                href={`/Blog/${post.id}`}
-                className="text-lg font-bold text-blue-500 hover:underline"
+          posts.map((post) => {
+            // Extract the filename from the image_url if it contains a full URL
+            const imageFilename = post.image_url.split("/").pop();
+            const imageUrl = `https://hasatlmjddrwgmaaosen.supabase.co/storage/v1/object/public/image_for_url/${imageFilename}`;
+
+            return (
+              <div
+                key={post.id}
+                className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4 cursor-pointer hover:shadow-lg transition-shadow duration-300"
               >
-                {post.title}
-              </Link>
-              <p className="text-gray-600">Author: {post.author}</p>
-              <p className="text-gray-700 mt-2">
-                {post.content.slice(0, 50)}...{" "}
-                <span className="text-blue-500">Read more</span>
-              </p>
-            </div>
-          ))
+                {/* Use Link to navigate to the detailed post page */}
+                <Link
+                  href={`/Blog/${post.id}`}
+                  className="text-lg font-bold text-blue-500 hover:underline dark:text-blue-400"
+                >
+                  {post.title}
+                </Link>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Author: {post.author}
+                </p>
+
+                {/* Display the image if it exists */}
+                {post.image_url && (
+                  <div className="my-2">
+                    <Image
+                      src={imageUrl}
+                      alt={post.title}
+                      width={100}
+                      height={100}
+                      className="rounded-lg"
+                    />
+                  </div>
+                )}
+
+                <p className="text-gray-700 dark:text-gray-300 mt-2">
+                  {post.content.slice(0, 50)}...{" "}
+                  <span className="text-blue-500 dark:text-blue-400">
+                    To Read more Click the Title
+                  </span>
+                </p>
+              </div>
+            );
+          })
         )}
       </div>
     </div>
