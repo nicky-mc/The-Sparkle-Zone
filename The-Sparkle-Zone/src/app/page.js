@@ -12,8 +12,8 @@ export default function Home() {
 
   const images = [
     { src: "/babycena.jpeg", alt: "Baby Cena" },
-    { src: "/charl.jpeg", alt: "Charl" },
-    { src: "/weddingfam.jpeg", alt: "Wedding Family" },
+    { src: "/Charl.jpeg", alt: "Charl" },
+    { src: "/Weddingfam.jpeg", alt: "Wedding Family" },
     { src: "/me.jpeg", alt: "Me" },
   ];
 
