@@ -47,15 +47,17 @@ export default function Home() {
           {images.map((image) => (
             <div
               key={image.src}
-              className={`relative cursor-pointer ${enlargedImage === image.src ? "scale-150" : "scale-100"} transition-transform duration-300`}
+              className={`relative cursor-pointer ${
+                enlargedImage === image.src ? "scale-150" : "scale-100"
+              } transition-transform duration-300`}
               onClick={() => handleImageClick(image.src)}
             >
               <div className="w-40 h-40 overflow-hidden hexagon relative">
                 <Image
                   src={image.src}
                   alt={image.alt}
-                  fill // Use fill instead of layout
-                  className="object-cover" // Use object-cover for proper fit
+                  fill // Use fill to fill the parent container
+                  className="object-cover" // Ensures the image covers the hexagon
                 />
               </div>
             </div>
