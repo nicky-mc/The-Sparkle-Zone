@@ -1,15 +1,15 @@
-"use client"; // This component will run on the client side
+"use client";
 
 import { useState, useEffect } from "react";
-import { TrashIcon } from "@heroicons/react/24/outline"; // Importing only TrashIcon for now
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 const CommentsSection = ({ post }) => {
   const [comments, setComments] = useState([]); // State for comments
   const [newComment, setNewComment] = useState(""); // State for new comment input
   const [name, setName] = useState(""); // State for user name
   const [location, setLocation] = useState(""); // State for user location
-  const [isEditing, setIsEditing] = useState(null); // State to track the comment being edited
-  const [editContent, setEditContent] = useState(""); // State for edited comment content
+  const [isEditing, setIsEditing] = useState(null); // Track which comment is being edited
+  const [editContent, setEditContent] = useState(""); // Store the content being edited
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -58,13 +58,33 @@ const CommentsSection = ({ post }) => {
     }
   };
 
-  // Handle editing a comment
-  const handleEditComment = (comment) => {
-    setIsEditing(comment.id); // Set the comment ID being edited
-    setEditContent(comment.content); // Pre-fill the textarea with the existing comment content
+  // Handle liking a comment
+  const handleLikeComment = async (commentId) => {
+    const comment = comments.find((comment) => comment.id === commentId);
+    if (!comment) return;
+
+    const newLikes = (comment.likes || 0) + 1; // Increment likes count
+
+    try {
+      const response = await fetch(`/api/posts/${post.id}/comments`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ commentId, likes: newLikes }), // Pass commentId and new likes in the body
+      });
+
+      if (response.ok) {
+        setComments((prev) =>
+          prev.map((c) => (c.id === commentId ? { ...c, likes: newLikes } : c))
+        ); // Update likes in state
+      } else {
+        console.error("Failed to update likes.");
+      }
+    } catch (error) {
+      console.error("Error while updating likes:", error);
+    }
   };
 
-  // Submit the edited comment
+  // Handle editing a comment
   const handleEditSubmit = async (commentId) => {
     if (editContent.trim() === "") {
       alert("Comment content cannot be empty.");
@@ -72,12 +92,10 @@ const CommentsSection = ({ post }) => {
     }
 
     try {
-      const response = await fetch(`/api/posts/${post.id}/comments/${commentId}`, {
+      const response = await fetch(`/api/posts/${post.id}/comments`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ content: editContent }), // Only send content to update
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ commentId, content: editContent }), // Pass commentId and updated content in the body
       });
 
       if (response.ok) {
@@ -97,19 +115,13 @@ const CommentsSection = ({ post }) => {
     }
   };
 
-  // Cancel the edit process
-  const handleCancelEdit = () => {
-    setIsEditing(null); // Exit editing mode without saving changes
-    setEditContent(""); // Clear the editContent state
-  };
-
   // Handle deleting a comment
   const handleDeleteComment = async (commentId) => {
     try {
       const response = await fetch(`/api/posts/${post.id}/comments`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ commentId }),
+        body: JSON.stringify({ commentId }), // Pass commentId in the body
       });
 
       if (response.ok) {
@@ -123,46 +135,22 @@ const CommentsSection = ({ post }) => {
     }
   };
 
-  // Handle liking a comment
-  const handleLikeComment = async (commentId) => {
-    const comment = comments.find((comment) => comment.id === commentId);
-    if (!comment) return;
-
-    const newLikes = (comment.likes || 0) + 1; // Increment likes count
-
-    try {
-      const response = await fetch(`/api/posts/${post.id}/comments/${commentId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ likes: newLikes }), // Send updated likes
-      });
-
-      if (response.ok) {
-        setComments((prev) =>
-          prev.map((c) => (c.id === commentId ? { ...c, likes: newLikes } : c))
-        ); // Update likes in state
-      } else {
-        console.error("Failed to update likes.");
-      }
-    } catch (error) {
-      console.error("Error while updating likes:", error);
-    }
-  };
-
   return (
-    <div className="comments-section">
-      <div className="mb-4">
-        {/* Input fields for adding a new comment */}
+    <div className="comments-section p-4 rounded-lg bg-white">
+      <h2 className="text-2xl mb-4 text-black">Comments</h2>
+
+      {/* Comment input form */}
+      <div className="mb-6 p-4 bg-gray-200 rounded-lg">
         <input
           type="text"
-          placeholder="Your name"
+          placeholder="Your Name"
           value={name}
           onChange={(e) => setName(e.target.value)} // Update name state
           className="border p-2 mb-2 w-full border-gray-400 text-black"
         />
         <input
           type="text"
-          placeholder="Your location"
+          placeholder="Your Location"
           value={location}
           onChange={(e) => setLocation(e.target.value)} // Update location state
           className="border p-2 mb-2 w-full border-gray-400 text-black"
@@ -204,7 +192,7 @@ const CommentsSection = ({ post }) => {
                       Save
                     </button>
                     <button
-                      onClick={handleCancelEdit}
+                      onClick={() => setIsEditing(null)}
                       className="bg-red-500 text-white px-4 py-2 rounded ml-2"
                     >
                       Cancel
@@ -225,12 +213,9 @@ const CommentsSection = ({ post }) => {
                       onClick={() => handleLikeComment(comment.id)}
                       className="mr-2"
                     >
-                      Like {/* Simple text for the like button */}
+                      Like
                     </button>
                     <span>{comment.likes || 0}</span> {/* Display likes */}
-                    <button onClick={() => handleEditComment(comment)}>
-                      Edit
-                    </button>
                     <button onClick={() => handleDeleteComment(comment.id)}>
                       <TrashIcon className="h-5 w-5 text-red-500" />
                     </button>
@@ -240,7 +225,9 @@ const CommentsSection = ({ post }) => {
             </li>
           ))
         ) : (
-          <p className="text-black">No comments yet. Be the first to comment!</p>
+          <p className="text-black">
+            No comments yet. Be the first to comment!
+          </p>
         )}
       </ul>
     </div>
