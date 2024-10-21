@@ -2,6 +2,10 @@
 
 Reflection on The Sparkle Zone App Development
 
+![Screenshot 2024-10-21 at 08 48 50](https://github.com/user-attachments/assets/dcd576c4-702a-496a-a228-6980fd7cdc29)
+
+
+
 Developing “The Sparkle Zone” has been an extensive journey, involving a variety of modern web development practices. The app is built using Next.js and Supabase for dynamic blog content, including the ability to create, view, and delete blog posts. The design and layout follow a clean, responsive aesthetic, with a focus on accessibility and user interaction.
 
 Key Features of The App
