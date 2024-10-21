@@ -63,7 +63,8 @@ const CommentsSection = ({ post }) => {
     const comment = comments.find((comment) => comment.id === commentId);
     if (!comment) return;
 
-    const newLikes = (comment.likes || 0) + 1; // Increment likes count
+    // Ensure likes are treated as a number
+    const newLikes = parseInt(comment.likes || 0) + 1;
 
     try {
       const response = await fetch(`/api/posts/${post.id}/comments`, {
@@ -209,6 +210,12 @@ const CommentsSection = ({ post }) => {
                     <p className="mt-2">{comment.content}</p>
                   </div>
                   <div className="flex items-center">
+                    <button
+                      onClick={() => setIsEditing(comment.id)} // Set the comment in edit mode
+                      className="mr-2 bg-yellow-500 text-white p-1 rounded"
+                    >
+                      Edit
+                    </button>
                     <button
                       onClick={() => handleLikeComment(comment.id)}
                       className="mr-2"
