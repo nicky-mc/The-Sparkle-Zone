@@ -32,9 +32,7 @@ export async function POST(req, { params }) {
   if (!content || !name) {
     return new Response(
       JSON.stringify({ message: "Content and name are required" }),
-      {
-        status: 400,
-      }
+      { status: 400 }
     );
   }
 
@@ -58,6 +56,44 @@ export async function POST(req, { params }) {
         message: "Error creating comment",
         error: error.message,
       }),
+      { status: 500 }
+    );
+  }
+}
+
+// Handle PUT requests to update comment content and/or likes
+export async function PUT(req, { params }) {
+  const { id } = params; // Extract postId from params
+  const { commentId, content, likes } = await req.json(); // Extract commentId, content, and likes from request body
+
+  if (!commentId) {
+    return new Response(
+      JSON.stringify({ message: "commentId is required" }),
+      { status: 400 }
+    );
+  }
+
+  try {
+    // Update comment content and/or likes (both can be updated independently)
+    const updateResult = await queryDb(
+      "UPDATE comments SET content = COALESCE($1, content), likes = COALESCE($2, likes) WHERE id = $3 AND post_id = $4 RETURNING *",
+      [content, likes, commentId, id]
+    );
+
+    const updatedComment = updateResult.rows[0];
+
+    if (!updatedComment) {
+      return new Response(
+        JSON.stringify({ message: "Comment not found" }),
+        { status: 404 }
+      );
+    }
+
+    return new Response(JSON.stringify(updatedComment), { status: 200 });
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    return new Response(
+      JSON.stringify({ message: "Error updating comment", error }),
       { status: 500 }
     );
   }
