@@ -29,7 +29,7 @@ export default function Home() {
           name="keywords"
           content="neurosparkly, personal, photos, creative space"
         />
-        <meta name="author" content="Your Name" />
+        <meta name="author" content="Nicky Mortoza-Cowles" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
 
