@@ -20,7 +20,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Welcome to Neurosparkly World</title>
+        <title>Welcome to My Neurosparkly World</title>
         <meta
           name="description"
           content="A vibrant space where you can explore photos and experiences that reflect different aspects of my world."

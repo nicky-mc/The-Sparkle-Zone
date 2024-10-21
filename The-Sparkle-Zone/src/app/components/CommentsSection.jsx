@@ -126,7 +126,9 @@ const CommentsSection = ({ post }) => {
       });
 
       if (response.ok) {
-        setComments((prev) => prev.filter((comment) => comment.id !== commentId)); // Remove deleted comment from state
+        setComments((prev) =>
+          prev.filter((comment) => comment.id !== commentId)
+        ); // Remove deleted comment from state
       } else {
         const errorData = await response.json();
         console.error("Error deleting comment:", errorData.message);
@@ -205,7 +207,9 @@ const CommentsSection = ({ post }) => {
                   <div>
                     <p className="font-semibold">{comment.name}</p>
                     {comment.location && (
-                      <p className="text-sm text-gray-500">{comment.location}</p>
+                      <p className="text-sm text-gray-500">
+                        {comment.location}
+                      </p>
                     )}
                     <p className="mt-2">{comment.content}</p>
                   </div>
@@ -217,10 +221,10 @@ const CommentsSection = ({ post }) => {
                       Edit
                     </button>
                     <button
-                    onClick={() => handleLikeComment(comment.id)}
-                    className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 mr-2"
+                      onClick={() => handleLikeComment(comment.id)}
+                      className="bg-blue-600 text-white p-1 rounded hover:bg-blue-700 mr-2"
                     >
-                    Like
+                      Like
                     </button>
                     <span>{comment.likes || 0}</span> {/* Display likes */}
                     <button onClick={() => handleDeleteComment(comment.id)}>
