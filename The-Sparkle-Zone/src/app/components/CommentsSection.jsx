@@ -217,10 +217,10 @@ const CommentsSection = ({ post }) => {
                       Edit
                     </button>
                     <button
-                      onClick={() => handleLikeComment(comment.id)}
-                      className="mr-2"
+                    onClick={() => handleLikeComment(comment.id)}
+                    className="bg-blue-600 text-white p-2 rounded hover:bg-blue-700 mr-2"
                     >
-                      Like
+                    Like
                     </button>
                     <span>{comment.likes || 0}</span> {/* Display likes */}
                     <button onClick={() => handleDeleteComment(comment.id)}>
