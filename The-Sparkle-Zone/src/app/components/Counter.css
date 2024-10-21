@@ -6,6 +6,7 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   text-align: center;
   font-family: "Raleway", sans-serif;
+  margin-top: 60px; /* Add margin to ensure it doesn't stick out over the header */
 }
 
 .click-button {
