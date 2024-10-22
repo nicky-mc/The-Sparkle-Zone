@@ -215,7 +215,10 @@ const CommentsSection = ({ post }) => {
                   </div>
                   <div className="flex items-center">
                     <button
-                      onClick={() => setIsEditing(comment.id)} // Set the comment in edit mode
+                      onClick={() => {
+                        setIsEditing(comment.id);
+                        setEditContent(comment.content);
+                      }}
                       className="mr-2 bg-yellow-500 text-white p-1 rounded"
                     >
                       Edit
